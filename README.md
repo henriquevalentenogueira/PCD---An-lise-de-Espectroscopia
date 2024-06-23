@@ -60,7 +60,7 @@ Plotagem do gráfico. Além de plotar, defini que, se o usuário quiser o ponto 
     plt.legend(loc='best', fontsize='medium', frameon=True, shadow=True)
     plt.show()
 ```
-## Criando uma função para os arquivos em xlsx. 
+## Criando uma função para os arquivos em xlsx:
 A estrutura do código não muda muito em relação ao código anterior. Por isso, comentarei somente a parte modificada.
 ```python
 def plotar_graficoxlsx(arquivo, x, y, marker='', color='black', label='', figsize=(12,8), xlabel='', ylabel='', title='', maximo=True, minimo=True):
@@ -100,6 +100,24 @@ arquivo = f"{arquivo}.xlsx"
                 break
     plt.legend(loc='best', fontsize='medium', frameon=True, shadow=True)
     plt.show()
-    
+```
+## Escrevendo a função principal
+Para a função principal, não foi necessário muita alteração. A função, então, lê o arquivo e escolhe se usaremos a plotagem para xlsx ou para txt. Ela recebe os mesmos argumentos que as outras duas funções, e, ao chamar a função de plotagem, escolhe os mesmos argumentos. 
+
+```python
+def plot_grafico(arquivo, x, y, marker='', color='red', label='', figsize=(12,8), xlabel ='', ylabel = '', title = '', maximo = True, minimo = True):
+    import os
+    from glob import glob
+    directory = os.getcwd()
+    directory_txt = f"{directory}\\*.txt"
+    directory_xlsx = f"{directory}\\*.xlsx"
+    list_txt = [i for i in glob(directory_txt)]
+    list_xlsx = [i for i in glob(directory_xlsx)]
+    arquivo_txt = f"{directory}\\{arquivo}.txt"
+    arquivo_xlsx = f"{directory}\\{arquivo}.xlsx"
+    if arquivo_txt in list_txt:
+        plotar_graficotxt(arquivo, x, y, marker,color,label,figsize,xlabel,ylabel,title, maximo, minimo)
+    elif arquivo_xlsx in list_xlsx:
+        plotar_graficoxlsx(arquivo, x, y, marker,color,label,figsize,xlabel,ylabel,title, maximo, minimo)
 
 

@@ -33,16 +33,21 @@ Começaremos agora a leitura do arquivo
     df = pd.read_csv(arquivo)
 ```
 Para a análise do ponto máximo e mínimo, tive que definir um valor mínimo e máximo, pois existem limitações na leitura pela máquina.
+A função organiza a coluna de dados de maneira descendente para encontrar o ponto máximo nos eixos x e y; e de maneira ascendente para encontrar o ponto mínimo nos eixos x e y. Ela então pega o primeiro elemento:
 ```python
     ponto_maximox, ponto_maximoy = df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 1]
     ponto_minimox, ponto_minimoy = df.loc[df['Wavelength (nm)'] >= 240 & df['Wavelength (nm)' <= 1200].sort_values(by='Absorbance', ascending=True).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 1]
 ```
 Plotagem do gráfico. Além de plotar, defini que, se o usuário quiser o ponto máximo e mínimo, marcaremos ele no gráfico.
+A plotagem do gráfico é padrão:
 ```python
     ax = df.plot(x=x, y=y, marker=marker, color=color, label=label, figsize=figsize)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
+```
+A condição de máximo e mínimo está aqui:
+```python
     if maximo == True:
         plt.scatter(ponto_maximox, ponto_maximoy, color='red', label='Ponto máximo')
         plt.text(ponto_maximox, ponto_maximoy, f'({ponto_maximox:.2f}, {ponto_maximoy:.2f})', fontsize=10, ha='center', va='bottom', color='black')
@@ -57,6 +62,9 @@ Plotagem do gráfico. Além de plotar, defini que, se o usuário quiser o ponto 
             if ponto_minimox in faixa:
                 print('O ponto mínimo de absorção da luz pela solução ocorre na cor ', cor)
                 break
+```
+Por fim, selecionei a legenda por questões estéticas e pedi para exibir.
+```python
     plt.legend(loc='best', fontsize='medium', frameon=True, shadow=True)
     plt.show()
 ```
@@ -64,6 +72,9 @@ Plotagem do gráfico. Além de plotar, defini que, se o usuário quiser o ponto 
 A estrutura do código não muda muito em relação ao código anterior. Por isso, comentarei somente a parte modificada.
 ```python
 def plotar_graficoxlsx(arquivo, x, y, marker='', color='black', label='', figsize=(12,8), xlabel='', ylabel='', title='', maximo=True, minimo=True):
+```
+Definidos o nome e os argumentos da função, o código segue:
+```python
     import matplotlib.pyplot as plt
     import pandas as pd
     import numpy as np
@@ -113,11 +124,14 @@ def plot_grafico(arquivo, x, y, marker='', color='red', label='', figsize=(12,8)
     directory_xlsx = f"{directory}\\*.xlsx"
     list_txt = [i for i in glob(directory_txt)]
     list_xlsx = [i for i in glob(directory_xlsx)]
+```
+A estrutura montada realmente visa a maior facilidade ao usuário. Para solucionar o problema de não saber se o arquivo é .txt ou .xlsx, utilizei o glob para pegar todos os arquivos do mesmo tipo no diretório selecionado. Caso esteja lá, ele encaminhará para a análise correspondente. Caso não esteja, ele retornará dizendo que não encontrou o arquivo.
+```python
     arquivo_txt = f"{directory}\\{arquivo}.txt"
     arquivo_xlsx = f"{directory}\\{arquivo}.xlsx"
     if arquivo_txt in list_txt:
         plotar_graficotxt(arquivo, x, y, marker,color,label,figsize,xlabel,ylabel,title, maximo, minimo)
     elif arquivo_xlsx in list_xlsx:
         plotar_graficoxlsx(arquivo, x, y, marker,color,label,figsize,xlabel,ylabel,title, maximo, minimo)
-
-
+    else:
+        raise ValueError('Tipo de arquivo não suportado. Use .txt ou .xlsx')

@@ -5,7 +5,7 @@ Repositório para códigos em técnicas de análise dos resultados de espectrosc
 Minha ideia para o código era que fosse o mais fácil e acessível possível. Cada máquina de espectroscopia trabalha de uma maneira diferente e recebemos arquivos tanto em .xlsx quanto em .txt. A leitura desses arquivos é diferente, então defini duas funções que leem esses arquivos e coloquei dentro de uma função maior:
  
 # Criando uma função para leitura, análise e plotagem de arquivos em txt: 
-A função terá 12 argumentos, sendo que somente três são essenciais: o nome do arquivo, o eixo x e o eixo y. Os outros argumentos são parâmetros da plotagem e a definição se encontrar o máximo e o mínimo da função é necessário.
+A função terá 12 argumentos, sendo que somente três são essenciais: o nome do arquivo, o eixo x e o eixo y. Os outros argumentos são parâmetros da plotagem e a definição se encontrar o máximo e o mínimo da função é necessário. Sua principal limitação é que, para a análise do ponto máximo e mínimo, é primordial que as colunas da dataframe estejam nomeadas de 'Wavelength (nm)' e 'Absorbance', o que já é comum nos documentos produzidos por máquinas de espectroscopia.
 ```python
 def plotar_graficotxt(arquivo, x, y, marker='', color='black', label='', figsize=(12,8), xlabel='', ylabel='', title='', maximo=True, minimo=True):
 ```
@@ -35,7 +35,7 @@ Começaremos agora a leitura do arquivo
 Para a análise do ponto máximo e mínimo, tive que definir um valor mínimo e máximo, pois existem limitações na leitura pela máquina.
 ```python
     ponto_maximox, ponto_maximoy = df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 1]
-    ponto_minimox, ponto_minimoy = df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 1]
+    ponto_minimox, ponto_minimoy = df.loc[df['Wavelength (nm)'] >= 240 & df['Wavelength (nm)' <= 1200].sort_values(by='Absorbance', ascending=True).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 1]
 ```
 Plotagem do gráfico. Além de plotar, defini que, se o usuário quiser o ponto máximo e mínimo, marcaremos ele no gráfico.
 ```python
@@ -79,7 +79,7 @@ arquivo = f"{arquivo}.xlsx"
 ```python
     df = pd.read_xlsx(arquivo)
     ponto_maximox, ponto_maximoy = df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=False).iloc[0, 1]
-    ponto_minimox, ponto_minimoy = df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 1]
+    ponto_minimox, ponto_minimoy = df.loc[df['Wavelength (nm)'] >= 240 & df['Wavelength (nm)' <= 1200].sort_values(by='Absorbance', ascending=True).iloc[0, 0], df.loc[df['Wavelength (nm)'] >= 240].sort_values(by='Absorbance', ascending=True).iloc[0, 1]
     ax = df.plot(x=x, y=y, marker=marker, color=color, label=label, figsize=figsize)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
